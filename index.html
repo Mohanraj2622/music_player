@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Clone</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+
+/* Splash Screen Styles */
+.splash-screen {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: #ca78c6;
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 1000;
+transition: opacity 0.5s ease-out;
+}
+
+.logo-container {
+text-align: center;
+}
+
+.logo {
+width: 120px;
+height: auto;
+margin-bottom: 20px;
+border-radius: 50%;
+}
+
+.app-title {
+font-size: 24px;
+font-weight: bold;
+color: #fff;
+}
+
+/* Main Content Styles */
+.main-content {
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+
+.menu-item {
+text-align: center;
+text-decoration: none;
+color: #b3b3b3;
+font-size: 12px;
+transition: color 0.3s ease;
+}
+
+.menu-item i {
+font-size: 20px;
+margin-bottom: 5px;
+display: block;
+}
+
+.menu-item.active,
+.menu-item:hover {
+color: #1db954;
+}
+
+</style>
+  <script src="script.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+const splashScreen = document.querySelector(".splash-screen");
+const mainContent = document.querySelector(".main-content");
+
+// Hide splash screen after 2 seconds
+setTimeout(() => {
+splashScreen.style.opacity = "0"; // Fade out the splash screen
+splashScreen.style.pointerEvents = "none"; // Disable pointer events
+setTimeout(() => {
+  splashScreen.style.display = "none"; // Remove splash screen from view
+  mainContent.style.display = "block"; // Show the main content
+}, 200); // Wait for fade-out transition
+}, 500); // Duration of the splash screen
+});
+
+const playBtn = document.getElementById('play');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const progress = document.getElementById('progress');
+const currentTimeEl = document.getElementById('current-time');
+const durationEl = document.getElementById('duration');
+
+const audio = new Audio('your-audio-file.mp3'); // Replace with your audio file
+
+let isPlaying = false;
+
+function togglePlay() {
+  if (isPlaying) {
+    audio.pause();
+    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+  } else {
+    audio.play();
+    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+  }
+  isPlaying = !isPlaying;
+}
+
+function updateProgress() {
+  const { currentTime, duration } = audio;
+  progress.value = (currentTime / duration) * 100 || 0;
+  currentTimeEl.textContent = formatTime(currentTime);
+  durationEl.textContent = formatTime(duration);
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+  return `${minutes}:${secs}`;
+}
+
+playBtn.addEventListener('click', togglePlay);
+
+audio.addEventListener('timeupdate', updateProgress);
+audio.addEventListener('ended', () => {
+  playBtn.innerHTML = '<i class="fas fa-play"></i>';
+  isPlaying = false;
+});
+
+
+</script>
+</head>
+<body>
+      <!-- Splash Screen -->
+  <div class="splash-screen">
+    <div class="logo-container">
+      <img src="soures/Logo.webp" alt="App Logo" class="logo">
+      <h1 class="app-title">Harmoniq</h1>
+    </div>
+  </div>
+    
+  <div class="spotify-app">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <h2 class="logo">Harmoniq</h2>
+      <!--<ul class="menu">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">Search</a></li>
+        <li><a href="#">Your Library</a></li>
+      </ul>-->
+      <div class="playlists">
+        <h3>Your Playlists</h3>
+        <ul>
+          <li>Chill Hits</li>
+          <li>Top 50 Global</li>
+          <li>Discover Weekly</li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <input type="text" placeholder="Search for artists, songs..." />
+      </header>
+
+      <section class="albums">
+        <h2>Albums</h2>
+        <div class="album-grid">
+          <!-- Album Cards -->
+          <div class="album-card">
+            <img src="https://via.placeholder.com/150" alt="Album 1">
+            <h3>Album 1</h3>
+            <p>Artist 1</p>
+          </div>
+          <div class="album-card">
+            <img src="https://via.placeholder.com/150" alt="Album 2">
+            <h3>Album 2</h3>
+            <p>Artist 2</p>
+          </div>
+          <div class="album-card">
+            <img src="https://via.placeholder.com/150" alt="Album 3">
+            <h3>Album 3</h3>
+            <p>Artist 3</p>
+          </div>
+          <div class="album-card">
+            <img src="https://via.placeholder.com/150" alt="Album 4">
+            <h3>Album 4</h3>
+            <p>Artist 4</p>
+          </div>
+        </div>
+        
+      </section>
+    </main>
+   <!-- <div class="player">
+        <img src="album-cover.jpg" alt="Album Cover" class="album-cover">
+        <h2 class="song-title">Song Title</h2>
+        <h3 class="artist">Artist Name</h3>
+        <div class="controls">
+          <button id="prev"><i class="fas fa-backward"></i></button>
+          <button id="play"><i class="fas fa-play"></i></button>
+          <button id="next"><i class="fas fa-forward"></i></button>
+        </div>
+        <div class="progress-container">
+          <span id="current-time">0:00</span>
+          <input type="range" id="progress" value="0">
+          <span id="duration">0:00</span>
+        </div>
+      </div>
+    </div>
+-->
+  </div>
+  <div class="bottom-menu">
+    <a href="#" class="menu-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="menu-item">
+      <i class="fas fa-search"></i>
+      <span>Search</span>
+    </a>
+    <a href="#" class="menu-item">
+      <i class="fas fa-music"></i>
+      <span>Playlist</span>
+    </a>
+  </div>
+  
+  <!-- FontAwesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  
+</body>
+</html>

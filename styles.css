@@ -1,0 +1,416 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    color: #fff;
+    background-color: #121212;
+    background-size: cover; /* Ensures the image covers the entire screen */
+    background-repeat: no-repeat; /* Prevents tiling */
+    background-position: center center; /* Centers the image */
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .music-player {
+    text-align: center;
+    width: 300px;
+    padding: 20px;
+    background-color: #1db954;
+    border-radius: 10px;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .album-cover {
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .song-title, .artist {
+    margin: 10px 0;
+  }
+  
+  .controls button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 10px;
+  }
+  
+  .progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  #progress {
+    flex: 1;
+    margin: 0 10px;
+  }
+
+  .spotify-app {
+    display: flex;
+    width: 100%;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 20%;
+    background-color: #1db954;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .menu {
+    list-style: none;
+  }
+  
+  .menu li {
+    margin: 15px 0;
+  }
+  
+  .menu li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+  }
+  
+  .menu li a.active {
+    font-weight: bold;
+  }
+  
+  .playlists {
+    margin-top: 20px;
+  }
+  
+  .playlists h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .playlists ul {
+    list-style: none;
+  }
+  
+  .playlists li {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  /* Main Content Styles */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .header input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background-color: #282828;
+    color: #fff;
+  }
+  
+  .albums {
+    margin-top: 20px;
+  }
+  
+  .albums h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+  }
+  
+  .album-card {
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .album-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .album-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .album-card h3 {
+    font-size: 18px;
+    margin: 5px 0;
+  }
+  
+  .album-card p {
+    font-size: 14px;
+    color: #b3b3b3;
+  }
+  /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    color: #fff;
+    background-color: #121212;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .spotify-app {
+    display: flex;
+    width: 100%;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 20%;
+    background-color: #1db954;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .menu {
+    list-style: none;
+  }
+  
+  .menu li {
+    margin: 15px 0;
+  }
+  
+  .menu li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+  }
+  
+  .menu li a.active {
+    font-weight: bold;
+  }
+  
+  .playlists {
+    margin-top: 20px;
+  }
+  
+  .playlists h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .playlists ul {
+    list-style: none;
+  }
+  
+  .playlists li {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  /* Main Content Styles */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .header input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background-color: #282828;
+    color: #fff;
+  }
+  
+  .albums {
+    margin-top: 20px;
+  }
+  
+  .albums h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+  }
+  
+  .album-card {
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .album-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .album-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .album-card h3 {
+    font-size: 18px;
+    margin: 5px 0;
+  }
+  
+  .album-card p {
+    font-size: 14px;
+    color: #b3b3b3;
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .sidebar {
+      width: 30%; /* Make sidebar smaller */
+      font-size: 14px; /* Reduce text size */
+    }
+  
+    .menu li {
+      margin: 10px 0;
+    }
+  
+    .playlists {
+      display: none; /* Hide playlists on smaller screens */
+    }
+  
+    .header input {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .album-card h3 {
+      font-size: 16px; /* Smaller album titles */
+    }
+  
+    .album-card p {
+      font-size: 12px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .spotify-app {
+      flex-direction: column; /* Stack sidebar and main content */
+    }
+  
+    .sidebar {
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+    }
+  
+    .menu {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+  
+    .menu li {
+      margin: 0;
+    }
+  
+    .menu li a {
+      font-size: 14px;
+    }
+  
+    .main-content {
+      padding: 10px;
+    }
+  
+    .album-grid {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Adjust album grid for small screens */
+    }
+  
+    .album-card img {
+      height: auto;
+    }
+  }
+  /* Bottom Menu Styles */
+.bottom-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #121212;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid #282828;
+    z-index: 1000;
+  }
+  
+  .menu-item {
+    text-align: center;
+    text-decoration: none;
+    color: #b3b3b3;
+    font-size: 12px;
+    transition: color 0.3s ease;
+  }
+  
+  .menu-item i {
+    font-size: 20px;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .menu-item.active,
+  .menu-item:hover {
+    color: #1db954;
+  }
+  
+  .bottom-menu .menu-item span {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+  }
+  
+ 
