@@ -1,287 +1,1594 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hormoniq Player</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: linear-gradient(to bottom, #1DB954, #121212);
-      color: white;
-      min-height: 100vh;
-      overscroll-behavior: contain;
+    :root {
+      --bg-dark: #373838;
+      --sidebar-bg: #040404;
+      --accent-green: #1DB954;
+      --text-light: #fffdfd;
+      --text-gray: #fafafa;
+      --player-bg: #05b14c;
     }
-    .container {
-      width: 100%;
-      max-width: 800px;
-      padding: 16px;
+
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
-    .search-bar {
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Splash Screen */
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(14, 129, 158);
       display: flex;
       justify-content: center;
-      margin-bottom: 20px;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease-out;
     }
+
+    .logo-container {
+      text-align: center;
+    }
+
+    .logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      background-color: #040404;
+    }
+
+    .app-title {
+      font-size: 24px;
+      color: var(--text-light);
+    }
+
+    .spotify-app {
+      display: flex;
+      height: 100%;
+    }
+
+
+
+    .sidebar .logo {
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* Container Styles */
+    .container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
+      overflow: hidden;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      margin-bottom: 20px;
+
+    }
+
     .search-bar input {
       width: 100%;
       padding: 10px;
-      border-radius: 20px;
+      background-color: white;
       border: none;
-      font-size: 16px;
-      outline: none;
+      border-radius: 20px;
+      color: red;
     }
+
+    /* Track List */
     .track-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 300px;
+      flex-grow: 1;
       overflow-y: auto;
+      list-style: none;
+      margin-bottom: 10px;
     }
+
     .track {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid #444;
+      padding: 6px;
+      border-bottom: 1px solid #adabab;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .track:hover, .track.active {
-      background: #333;
+
+    .track:hover {
+      background-color: #110e0e;
     }
+
+    .track img {
+      width: 10px;
+      height: 10px;
+      margin-right: 15px;
+      border-radius: 5px;
+    }
+
+    .track-info {
+      flex-grow: 1;
+    }
+
+    .track-title {
+      font-size: 16px;
+    }
+
+    .track-artist {
+      font-size: 12px;
+      color: var(--text-gray);
+    }
+
+    /* Player */
     .player {
-      background: #222;
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 20px;
+      background-color: var(--player-bg);
+      border-radius: 10px;
+      padding: 5px;
       text-align: center;
+      padding-bottom: 30px;
     }
-    .player img {
-      width: 100%;
-      max-width: 300px;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 16px;
-      margin-bottom: 16px;
+
+    .player #cover {
+      width: 0%;
+      height: 0%;
+      border-radius: 10px;
+      margin: 0 auto 20px;
+      display: none;
     }
-    .player-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
+
+    .player #title {
+      font-size: 18px;
+      margin-bottom: 10px;
     }
-    .player-controls button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      transition: color 0.2s;
+
+    .player #artist {
+      color: var(--text-gray);
+      margin-bottom: 10px;
     }
-    .player-controls button:hover {
-      color: #1DB954;
-    }
+
     .progress-bar {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
+
     .progress-bar input {
-      flex: 1;
+      flex-grow: 1;
     }
+
+    .player-controls {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .player-controls button {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .player-controls button:hover {
+      color: var(--accent-green);
+    }
+
     .volume-controls {
       display: flex;
       align-items: center;
+      justify-content: center;
+      color: yellow;
       gap: 10px;
     }
+
+    /* Bottom Menu */
+    .bottom-menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: black;
+      display: flex;
+      justify-content: space-around;
+      padding: 7px 0;
+    }
+
+    .menu-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-gray);
+    }
+
+    .menu-item i {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .menu-item.active,
+    .menu-item:hover {
+      color: var(--accent-green);
+    }
+
+    /* Responsive Design */
+    @media (min-width: 768px) {
+
+      .bottom-menu {
+        display: none;
+      }
+    }
+
+    /* Header styling */
+    .header {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      letter-spacing: 2px;
+      padding: 2px;
+      text-align: center;
+      background: linear-gradient(45deg, #ff6f61, #f6d365, #00bcd4, #8e44ad);
+      background-size: 100% 100%;
+      animation: gradientAnimation 10s ease infinite;
+      -webkit-background-clip: text;
+      color: transparent;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    /* Gradient animation */
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Subtle hover effect to enhance interaction */
+    .header:hover {
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
   </style>
-</head>
+  
+  <script>
+    //
+    document.addEventListener("DOMContentLoaded", () => {
+      const splashScreen = document.querySelector(".splash-screen");
+      const mainContent = document.querySelector(".main-content");
+
+      // Hide splash screen after 2 seconds
+      setTimeout(() => {
+        splashScreen.style.opacity = "0"; // Fade out the splash screen
+        splashScreen.style.pointerEvents = "none"; // Disable pointer events
+        setTimeout(() => {
+          splashScreen.style.display = "none"; // Remove splash screen from view
+          mainContent.style.display = "block"; // Show the main content
+        }, 500); // Wait for fade-out transition
+      }, 500); // Duration of the splash screen
+    });
+
+  </script>
+
 <body>
-  <div class="container">
-    <div class="search-bar">
-      <input id="search" type="text" placeholder="Search for a song...">
+  <!-- Splash Screen -->
+  <div class="splash-screen">
+    <div class="logo-container">
+      <img src="profile.jpg" alt="App_Logo" class="logo">
+      <h1 class="app-title">Harmoniq</h1>
+      <p>Education Purpose Only</p>
     </div>
+  </div>
+  <h3 class="header"><img src="profile.jpg" alt="">Harmoniq</h3>
 
-    <ul id="trackList" class="track-list"></ul>
-
-    <div class="player">
-      <img id="cover" src="/api/placeholder/300/300" alt="Album Cover">
-      <h2 id="title">Select a Song</h2>
-      <p id="artist">Artist</p>
-
-      <div class="progress-bar">
-        <span id="currentTime">0:00</span>
-        <input id="progress" type="range" min="0" max="100" value="0">
-        <span id="duration">0:00</span>
+  <div class="spotify-app">
+    <div class="container">
+      <div class="search-bar">
+        <input id="search" type="text" placeholder="Search for a song...">
       </div>
 
-      <div class="player-controls">
-        <button id="prev" aria-label="Previous Song">⏮️</button>
-        <button id="playPause" aria-label="Play/Pause">▶️</button>
-        <button id="next" aria-label="Next Song">⏭️</button>
-      </div>
+      <ul id="trackList" class="track-list">
+        <!-- Track items will be dynamically added here -->
+        <li class="track">
+          <!-- <img src="/api/placeholder/50/50" alt="Track Cover">-->
+          <div class="track-info">
+            <div class="track-title">Track</div>
+            <div class="track-artist">Artist</div>
+          </div>
+        </li>
+      </ul>
 
-      <div class="volume-controls">
-        <label for="volume">🔊</label>
-        <input id="volume" type="range" min="0" max="100" value="100">
+      <div class="player">
+        <img id="cover" src="/api/placeholder/50/50" alt="Album Cover">
+        <h3 id="title">Select a Song</h3>
+        <p id="artist">Artist</p>
+
+        <div class="progress-bar">
+          <span id="currentTime">0:00</span>
+          <input id="progress" type="range" min="0" max="100" value="0">
+          <span id="duration">0:00</span>
+        </div>
+
+        <div class="player-controls">
+          <button id="prev" aria-label="Previous Song">⏮️</button>
+          <button id="playPause" aria-label="Play/Pause">▶️</button>
+          <button id="next" aria-label="Next Song">⏭️</button>
+        </div>
+
+        <div class="volume-controls">
+          <label for="volume">🔊</label>
+          <input id="volume" type="range" min="0" max="100" value="100">
+        </div>
       </div>
     </div>
   </div>
 
-  <script>
-// Existing code remains the same
-const SONGS = [
-  {
-    title: "Rowdy Baby",
-    artist: "Dhanush",
-    url: "Thalli-Pogathey.mp3",
-    coverUrl: "https://example.com/cover1.jpg",
-  },
-  {
-    title: "Another Song",
-    artist: "Artist Name",
-    url: "Adiye-MassTamilan.fm.mp3",
-    coverUrl: "https://example.com/cover2.jpg",
-  }
-];
+  <div class="bottom-menu">
+    <a href="#" class="menu-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="menu-item">
+      <i class="fas fa-search"></i>
+      <span>Search</span>
+    </a>
+    <a href="#search" class="menu-item">
+      <i class="fas fa-music"></i>
+      <span>Playlist</span>
+    </a>
+  </div>
+</body>
 
-let currentSongIndex = 0;
-let isPlaying = false;
+<script>
+  // Existing code remains the same
+  const SONGS = [
+    {
+      title: "Naan-Gaali",
+      artist: "Mohan",
+      url: "Naan-Gaali-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Adiye",
+      artist: "Artist Name",
+      url: "Adiye-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover2.jpg",
+    },
+   
+    // continue
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "A-Love-Blossoms-Instrumental.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "A-Square-B-Square-(Female-Version)-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aagaaya-Neelangalil-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aagaya-Suriyanai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aakaasam Nee Haddhu Ra.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thalli-Pogathey.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aaradi-Kathe-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aararo.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aarumuga-Saamy.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aasa Orave.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Aathangara-Orathil.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Adhaaru-Adhaaru.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Adiyae-Kolluthey-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Akkam-Pakkam.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Alaikaa-Laikaa-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Alaipayuthey-Kanna.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Amara.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Anbe-Anbe.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Anbe-En-Anbe-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Andangkaka.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Annul-Maelae-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Antartica-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Appappa.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Asku-Laska-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Ava-Enna-Enna-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Avalum-Naanum.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Ayyayo-Nenju.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Azhagiya-Theeye.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Bathing-At-Cannes.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Chikku-Bukku-Chikku-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Chillanjirukkiye.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Damakku-Damakku-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Damma Goli.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Dhimu-Dhimu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Dhinam Dhinamum.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Ellu-Vaya-Pookalaye-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "En-Anbe-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "En-Frienda-Pola-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "En-Vennilave.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Enakku-Thaan-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Endhira-Logathu-Sundhariye-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Engeyum-Kaadhal.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Eppo-Nee.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Fear Song.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Google-Google-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Gutkha-Lakkadi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Hasili-Fisiliye-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Heartiley-Battery-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Hey Minnale.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "His Name is John.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Horu Gali.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Hunter Vantaar.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Idhu-Naal.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Idhuthaanaa.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Innum-Enna-Thozha.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Iru-Vizhi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Irukkana-Idupu-Irukkana-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Iyengaaru-Veetu-Azhage.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Jagdish-On-Mission-(Theme)-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "June-Pona.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kaadhal-Kanmani-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kaadhal-Yaanai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kaala-Kaala.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kaatuka Kanule.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kalyaanam-Thaan-Kattikittu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kambikara-Vetti.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kanave.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kanavellam.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kannadi-Nilave-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kannazhagu-Rathiname-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kanneer-Thuliye.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kannum-Kannum-Nokia.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kannum-Kannum-Plus-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Karu-Karu-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Karuppu-Nerathazhagi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kathari-Poovazhagi-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kavan-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kummiyadi-Penne-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kutti-Pisase.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Kutti-Puli-Kootam-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Life-Of-Bachelor-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Lolita.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Lubber Pandhu Theme.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Maddy-Maddy.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Maha Theme (Telugu).mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Maja-Wedding-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Makkamishi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Manasilaayo.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Manjal-Veiyil.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Mazhai Mazhai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Mella-Valanjadhu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Miss-You-Baby-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Moongil-Kaadugale.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Mun-Andhi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Mundhinam-Parthene-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "My-Dear-Loveru-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "My-Dear-Pondatti-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nalla-Nanban-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nangaai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nenjai-Poopol.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nenjellam-Nindrayae-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nenjil-Nenjil.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nenjodu-Nee-(Female)-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Nerupae.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Noorandu-Kathale-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oh Maname.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oh-Balu-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oh-Mama-Mama.mp33",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oh-Ringa-Ringa.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oh-Shanthi-Shanthi-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oh-Sukumari.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Okka Nimisham.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oorellam-Unnai-Kandu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oru-Maalai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oru-Vaanam-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Oru-Vazhi-Pathai-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Otha-Sollaala.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Othayilae.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Pachai-Uduthiya-Kaadu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Pachigalam-Paravaigalam-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Partha-Muthal.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Pilla Puli.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Poi-Varavaa-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Polladha-Boomi-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Pooppol-Poopol.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Por Veeran (Azadi).mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Poraen Naa Poraen.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Porkkalam-Tamil-Rap.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Pudichirukku.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Pullinangal-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Raajali-Nee-Gaali-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Ragasiyam-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Rahatulla.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Rangola.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Rasaali.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Sai Pallavi's Intro.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Sakhiyae.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Sawadeeka-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Showkali.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Silu-Silu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Sithramaina Bhoomi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Sleeping-Beauty-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Suttum-Vizhi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thalaivane-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thalavali-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "That-Is-Mahalakshmi-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "The-Blood-Bath-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "The-Rise-of-Damo.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thee-Illai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Theme-Music.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thiru-Thiru-Gananatha-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thirunelveli-Alvada.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Thotta-Power.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Unakkenna-Venum-Sollu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Unakkul-Naane-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Unnaale-Unnaale.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Uyirey.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vaane Vaane.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vaarayo-Vaarayo-MassTamilan.dev.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vandhuttaanda-Kaalai.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vaseegara.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Veeramulla.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Venmathiye.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vennilave-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vennilavu Saaral.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Veppamaram.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Verenna-Verenna.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vilaiyaadu-Vilaiyaadu.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Vizhiyil-Un-Vizhiyil.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Warriors-English-Rap.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "X-Machi.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yamma-Yamma.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yathe-Yathe.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yeanadi-Yeanadi-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yellae-Lama.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yen-Minukki-MassTamilan.org.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yendhan-Kan-Munne-MassTamilan.fm.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    },
+    {
+      title: "Rowdy Baby",
+      artist: "Dhanush",
+      url: "Yethi-Yethi-MassTamilan.com.mp3",
+      coverUrl: "https://example.com/cover1.jpg",
+    }
 
-const audio = new Audio();
-const trackList = document.getElementById('trackList');
-const searchInput = document.getElementById('search');
+  ];
 
-const title = document.getElementById('title');
-const artist = document.getElementById('artist');
-const cover = document.getElementById('cover');
-const playPauseButton = document.getElementById('playPause');
-const prevButton = document.getElementById('prev');
-const nextButton = document.getElementById('next');
-const progress = document.getElementById('progress');
-const currentTimeDisplay = document.getElementById('currentTime');
-const durationDisplay = document.getElementById('duration');
-const volume = document.getElementById('volume');
+  let currentSongIndex = 0;
+  let isPlaying = false;
 
-// Load the selected song and update UI elements
-const loadSong = (index) => {
-  const song = SONGS[index];
-  title.textContent = song.title;
-  artist.textContent = song.artist;
-  cover.src = song.coverUrl;
-  audio.src = song.url;
-  progress.value = 0;
-  currentTimeDisplay.textContent = "0:00";
-  durationDisplay.textContent = "0:00";
-};
+  const audio = new Audio();
+  const trackList = document.getElementById('trackList');
+  const searchInput = document.getElementById('search');
 
-// Play song and update the play button state
-const playSong = () => {
-  isPlaying = true;
-  audio.play();
-  playPauseButton.textContent = '⏸️';
-};
+  const title = document.getElementById('title');
+  const artist = document.getElementById('artist');
+  const cover = document.getElementById('cover');
+  const playPauseButton = document.getElementById('playPause');
+  const prevButton = document.getElementById('prev');
+  const nextButton = document.getElementById('next');
+  const progress = document.getElementById('progress');
+  const currentTimeDisplay = document.getElementById('currentTime');
+  const durationDisplay = document.getElementById('duration');
+  const volume = document.getElementById('volume');
 
-// Pause song and update the play button state
-const pauseSong = () => {
-  isPlaying = false;
-  audio.pause();
-  playPauseButton.textContent = '▶️';
-};
+  // Load the selected song and update UI elements
+  const loadSong = (index) => {
+    const song = SONGS[index];
+    title.textContent = song.title;
+    artist.textContent = song.artist;
+    cover.src = song.coverUrl;
+    audio.src = song.url;
+    progress.value = 0;
+    currentTimeDisplay.textContent = "0:00";
+    durationDisplay.textContent = "0:00";
+  };
 
-// Toggle play/pause on button click
-const togglePlayPause = () => {
-  isPlaying ? pauseSong() : playSong();
-};
+  // Play song and update the play button state
+  const playSong = () => {
+    isPlaying = true;
+    audio.play();
+    playPauseButton.textContent = '⏸️';
+  };
 
-// Play next song when current song ends
-const playNextSong = () => {
-  currentSongIndex = (currentSongIndex + 1) % SONGS.length;
-  loadSong(currentSongIndex);
-  playSong();
-};
+  // Pause song and update the play button state
+  const pauseSong = () => {
+    isPlaying = false;
+    audio.pause();
+    playPauseButton.textContent = '▶️';
+  };
 
-// Play previous song
-const playPrevSong = () => {
-  currentSongIndex = (currentSongIndex - 1 + SONGS.length) % SONGS.length;
-  loadSong(currentSongIndex);
-  playSong();
-};
+  // Toggle play/pause on button click
+  const togglePlayPause = () => {
+    isPlaying ? pauseSong() : playSong();
+  };
 
-// Update the progress bar and time displays while the song is playing
-const updateProgress = () => {
-  const { currentTime, duration } = audio;
-  progress.value = (currentTime / duration) * 100 || 0;
-  currentTimeDisplay.textContent = formatTime(currentTime);
-  durationDisplay.textContent = formatTime(duration);
-};
+  // Play next song when current song ends
+  const playNextSong = () => {
+    currentSongIndex = (currentSongIndex + 1) % SONGS.length;
+    loadSong(currentSongIndex);
+    playSong();
+  };
 
-// Format time in mm:ss format
-const formatTime = (time) => {
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-  return `${minutes}:${seconds}`;
-};
+  // Play previous song
+  const playPrevSong = () => {
+    currentSongIndex = (currentSongIndex - 1 + SONGS.length) % SONGS.length;
+    loadSong(currentSongIndex);
+    playSong();
+  };
 
-// Seek to a specific time in the song
-const handleSeek = (e) => {
-  const seekTime = (e.target.value / 100) * audio.duration;
-  audio.currentTime = seekTime;
-};
+  // Update the progress bar and time displays while the song is playing
+  const updateProgress = () => {
+    const { currentTime, duration } = audio;
+    progress.value = (currentTime / duration) * 100 || 0;
+    currentTimeDisplay.textContent = formatTime(currentTime);
+    durationDisplay.textContent = formatTime(duration);
+  };
 
-// Update volume when user adjusts the volume slider
-const updateVolume = (e) => {
-  audio.volume = e.target.value / 100;
-};
+  // Format time in mm:ss format
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  };
 
-// Filter songs based on the search input
-const filterSongs = () => {
-  const query = searchInput.value.toLowerCase();
-  const filteredSongs = SONGS.filter((song) => song.title.toLowerCase().includes(query));
-  renderSongList(filteredSongs);
-};
+  // Seek to a specific time in the song
+  const handleSeek = (e) => {
+    const seekTime = (e.target.value / 100) * audio.duration;
+    audio.currentTime = seekTime;
+  };
 
-// Render the list of songs based on the filter
-const renderSongList = (songs) => {
-  trackList.innerHTML = '';
-  songs.forEach((song, index) => {
-    const li = document.createElement('li');
-    li.textContent = `${song.title} - ${song.artist}`;
-    li.classList.add('track');
-    li.addEventListener('click', () => {
-      currentSongIndex = index;
-      loadSong(currentSongIndex);
-      playSong();
+  // Update volume when user adjusts the volume slider
+  const updateVolume = (e) => {
+    audio.volume = e.target.value / 100;
+  };
+
+  // Filter songs based on the search input
+  const filterSongs = () => {
+    const query = searchInput.value.toLowerCase();
+    const filteredSongs = SONGS.filter((song) => song.title.toLowerCase().includes(query));
+    renderSongList(filteredSongs);
+  };
+
+  // Render the list of songs based on the filter
+  const renderSongList = (songs) => {
+    trackList.innerHTML = '';
+    songs.forEach((song, index) => {
+      const li = document.createElement('li');
+      li.textContent = `${song.title} - ${song.artist}`;
+      li.classList.add('track');
+      li.addEventListener('click', () => {
+        currentSongIndex = index;
+        loadSong(currentSongIndex);
+        playSong();
+      });
+      trackList.appendChild(li);
     });
-    trackList.appendChild(li);
+  };
+
+  // Event listener for when the song finishes
+  audio.addEventListener('ended', () => {
+    playNextSong(); // Automatically play next song when current song ends
   });
-};
 
-// Event listener for when the song finishes
-audio.addEventListener('ended', () => {
-  playNextSong(); // Automatically play next song when current song ends
-});
+  // Event listeners for various buttons and inputs
+  searchInput.addEventListener('input', filterSongs);
+  playPauseButton.addEventListener('click', togglePlayPause);
+  nextButton.addEventListener('click', playNextSong);
+  prevButton.addEventListener('click', playPrevSong);
+  progress.addEventListener('input', handleSeek);
+  volume.addEventListener('input', updateVolume);
 
-// Event listeners for various buttons and inputs
-searchInput.addEventListener('input', filterSongs);
-playPauseButton.addEventListener('click', togglePlayPause);
-nextButton.addEventListener('click', playNextSong);
-prevButton.addEventListener('click', playPrevSong);
-progress.addEventListener('input', handleSeek);
-volume.addEventListener('input', updateVolume);
-
-// Load the first song and render the song list initially
-loadSong(currentSongIndex);
-renderSongList(SONGS);
-setInterval(updateProgress, 1000); // Update progress bar every second
+  // Load the first song and render the song list initially
+  loadSong(currentSongIndex);
+  renderSongList(SONGS);
+  setInterval(updateProgress, 1000); // Update progress bar every second
 
 </script>
-</body>
-</html>
