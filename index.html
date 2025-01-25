@@ -3,231 +3,285 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Clone</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Hormoniq Player</title>
   <style>
-
-/* Splash Screen Styles */
-.splash-screen {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: #ca78c6;
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 1000;
-transition: opacity 0.5s ease-out;
-}
-
-.logo-container {
-text-align: center;
-}
-
-.logo {
-width: 120px;
-height: auto;
-margin-bottom: 20px;
-border-radius: 50%;
-}
-
-.app-title {
-font-size: 24px;
-font-weight: bold;
-color: #fff;
-}
-
-/* Main Content Styles */
-.main-content {
-width: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
-}
-
-
-.menu-item {
-text-align: center;
-text-decoration: none;
-color: #b3b3b3;
-font-size: 12px;
-transition: color 0.3s ease;
-}
-
-.menu-item i {
-font-size: 20px;
-margin-bottom: 5px;
-display: block;
-}
-
-.menu-item.active,
-.menu-item:hover {
-color: #1db954;
-}
-
-</style>
-  <script src="script.js" defer></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-const splashScreen = document.querySelector(".splash-screen");
-const mainContent = document.querySelector(".main-content");
-
-// Hide splash screen after 2 seconds
-setTimeout(() => {
-splashScreen.style.opacity = "0"; // Fade out the splash screen
-splashScreen.style.pointerEvents = "none"; // Disable pointer events
-setTimeout(() => {
-  splashScreen.style.display = "none"; // Remove splash screen from view
-  mainContent.style.display = "block"; // Show the main content
-}, 200); // Wait for fade-out transition
-}, 500); // Duration of the splash screen
-});
-
-const playBtn = document.getElementById('play');
-const prevBtn = document.getElementById('prev');
-const nextBtn = document.getElementById('next');
-const progress = document.getElementById('progress');
-const currentTimeEl = document.getElementById('current-time');
-const durationEl = document.getElementById('duration');
-
-const audio = new Audio('your-audio-file.mp3'); // Replace with your audio file
-
-let isPlaying = false;
-
-function togglePlay() {
-  if (isPlaying) {
-    audio.pause();
-    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-  } else {
-    audio.play();
-    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-  }
-  isPlaying = !isPlaying;
-}
-
-function updateProgress() {
-  const { currentTime, duration } = audio;
-  progress.value = (currentTime / duration) * 100 || 0;
-  currentTimeEl.textContent = formatTime(currentTime);
-  durationEl.textContent = formatTime(duration);
-}
-
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
-  return `${minutes}:${secs}`;
-}
-
-playBtn.addEventListener('click', togglePlay);
-
-audio.addEventListener('timeupdate', updateProgress);
-audio.addEventListener('ended', () => {
-  playBtn.innerHTML = '<i class="fas fa-play"></i>';
-  isPlaying = false;
-});
-
-
-</script>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(to bottom, #1DB954, #121212);
+      color: white;
+      min-height: 100vh;
+      overscroll-behavior: contain;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+    .track-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .track {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .track:hover, .track.active {
+      background: #333;
+    }
+    .player {
+      background: #222;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .player img {
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+    .player-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .player-controls button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .player-controls button:hover {
+      color: #1DB954;
+    }
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .progress-bar input {
+      flex: 1;
+    }
+    .volume-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
 </head>
 <body>
-      <!-- Splash Screen -->
-  <div class="splash-screen">
-    <div class="logo-container">
-      <img src="Logo.webp" alt="App Logo" class="logo">
-      <h1 class="app-title">Harmoniq</h1>
+  <div class="container">
+    <div class="search-bar">
+      <input id="search" type="text" placeholder="Search for a song...">
     </div>
-  </div>
-    
-  <div class="spotify-app">
-    <!-- Sidebar -->
-    <nav class="sidebar">
-      <h2 class="logo">Harmoniq</h2>
-      <!--<ul class="menu">
-        <li><a href="#" class="active">Home</a></li>
-        <li><a href="#">Search</a></li>
-        <li><a href="#">Your Library</a></li>
-      </ul>-->
-      <div class="playlists">
-        <h3>Your Playlists</h3>
-        <ul>
-          <li>Chill Hits</li>
-          <li>Top 50 Global</li>
-          <li>Discover Weekly</li>
-        </ul>
+
+    <ul id="trackList" class="track-list"></ul>
+
+    <div class="player">
+      <img id="cover" src="/api/placeholder/300/300" alt="Album Cover">
+      <h2 id="title">Select a Song</h2>
+      <p id="artist">Artist</p>
+
+      <div class="progress-bar">
+        <span id="currentTime">0:00</span>
+        <input id="progress" type="range" min="0" max="100" value="0">
+        <span id="duration">0:00</span>
       </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <header class="header">
-        <input type="text" placeholder="Search for artists, songs..." />
-      </header>
+      <div class="player-controls">
+        <button id="prev" aria-label="Previous Song">⏮️</button>
+        <button id="playPause" aria-label="Play/Pause">▶️</button>
+        <button id="next" aria-label="Next Song">⏭️</button>
+      </div>
 
-      <section class="albums">
-        <h2>Albums</h2>
-        <div class="album-grid">
-          <!-- Album Cards -->
-          <div class="album-card">
-            <img src="https://via.placeholder.com/150" alt="Album 1">
-            <h3>Album 1</h3>
-            <p>Artist 1</p>
-          </div>
-          <div class="album-card">
-            <img src="https://via.placeholder.com/150" alt="Album 2">
-            <h3>Album 2</h3>
-            <p>Artist 2</p>
-          </div>
-          <div class="album-card">
-            <img src="https://via.placeholder.com/150" alt="Album 3">
-            <h3>Album 3</h3>
-            <p>Artist 3</p>
-          </div>
-          <div class="album-card">
-            <img src="https://via.placeholder.com/150" alt="Album 4">
-            <h3>Album 4</h3>
-            <p>Artist 4</p>
-          </div>
-        </div>
-        
-      </section>
-    </main>
-   <!-- <div class="player">
-        <img src="album-cover.jpg" alt="Album Cover" class="album-cover">
-        <h2 class="song-title">Song Title</h2>
-        <h3 class="artist">Artist Name</h3>
-        <div class="controls">
-          <button id="prev"><i class="fas fa-backward"></i></button>
-          <button id="play"><i class="fas fa-play"></i></button>
-          <button id="next"><i class="fas fa-forward"></i></button>
-        </div>
-        <div class="progress-container">
-          <span id="current-time">0:00</span>
-          <input type="range" id="progress" value="0">
-          <span id="duration">0:00</span>
-        </div>
+      <div class="volume-controls">
+        <label for="volume">🔊</label>
+        <input id="volume" type="range" min="0" max="100" value="100">
       </div>
     </div>
--->
   </div>
-  <div class="bottom-menu">
-    <a href="#" class="menu-item">
-      <i class="fas fa-home"></i>
-      <span>Home</span>
-    </a>
-    <a href="#" class="menu-item">
-      <i class="fas fa-search"></i>
-      <span>Search</span>
-    </a>
-    <a href="#" class="menu-item">
-      <i class="fas fa-music"></i>
-      <span>Playlist</span>
-    </a>
-  </div>
-  
-  <!-- FontAwesome for icons -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  
+
+  <script>
+// Existing code remains the same
+const SONGS = [
+  {
+    title: "Rowdy Baby",
+    artist: "Dhanush",
+    url: "Thalli-Pogathey.mp3",
+    coverUrl: "https://example.com/cover1.jpg",
+  },
+  {
+    title: "Another Song",
+    artist: "Artist Name",
+    url: "Adiye-MassTamilan.fm.mp3",
+    coverUrl: "https://example.com/cover2.jpg",
+  }
+];
+
+let currentSongIndex = 0;
+let isPlaying = false;
+
+const audio = new Audio();
+const trackList = document.getElementById('trackList');
+const searchInput = document.getElementById('search');
+
+const title = document.getElementById('title');
+const artist = document.getElementById('artist');
+const cover = document.getElementById('cover');
+const playPauseButton = document.getElementById('playPause');
+const prevButton = document.getElementById('prev');
+const nextButton = document.getElementById('next');
+const progress = document.getElementById('progress');
+const currentTimeDisplay = document.getElementById('currentTime');
+const durationDisplay = document.getElementById('duration');
+const volume = document.getElementById('volume');
+
+// Load the selected song and update UI elements
+const loadSong = (index) => {
+  const song = SONGS[index];
+  title.textContent = song.title;
+  artist.textContent = song.artist;
+  cover.src = song.coverUrl;
+  audio.src = song.url;
+  progress.value = 0;
+  currentTimeDisplay.textContent = "0:00";
+  durationDisplay.textContent = "0:00";
+};
+
+// Play song and update the play button state
+const playSong = () => {
+  isPlaying = true;
+  audio.play();
+  playPauseButton.textContent = '⏸️';
+};
+
+// Pause song and update the play button state
+const pauseSong = () => {
+  isPlaying = false;
+  audio.pause();
+  playPauseButton.textContent = '▶️';
+};
+
+// Toggle play/pause on button click
+const togglePlayPause = () => {
+  isPlaying ? pauseSong() : playSong();
+};
+
+// Play next song when current song ends
+const playNextSong = () => {
+  currentSongIndex = (currentSongIndex + 1) % SONGS.length;
+  loadSong(currentSongIndex);
+  playSong();
+};
+
+// Play previous song
+const playPrevSong = () => {
+  currentSongIndex = (currentSongIndex - 1 + SONGS.length) % SONGS.length;
+  loadSong(currentSongIndex);
+  playSong();
+};
+
+// Update the progress bar and time displays while the song is playing
+const updateProgress = () => {
+  const { currentTime, duration } = audio;
+  progress.value = (currentTime / duration) * 100 || 0;
+  currentTimeDisplay.textContent = formatTime(currentTime);
+  durationDisplay.textContent = formatTime(duration);
+};
+
+// Format time in mm:ss format
+const formatTime = (time) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
+
+// Seek to a specific time in the song
+const handleSeek = (e) => {
+  const seekTime = (e.target.value / 100) * audio.duration;
+  audio.currentTime = seekTime;
+};
+
+// Update volume when user adjusts the volume slider
+const updateVolume = (e) => {
+  audio.volume = e.target.value / 100;
+};
+
+// Filter songs based on the search input
+const filterSongs = () => {
+  const query = searchInput.value.toLowerCase();
+  const filteredSongs = SONGS.filter((song) => song.title.toLowerCase().includes(query));
+  renderSongList(filteredSongs);
+};
+
+// Render the list of songs based on the filter
+const renderSongList = (songs) => {
+  trackList.innerHTML = '';
+  songs.forEach((song, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${song.title} - ${song.artist}`;
+    li.classList.add('track');
+    li.addEventListener('click', () => {
+      currentSongIndex = index;
+      loadSong(currentSongIndex);
+      playSong();
+    });
+    trackList.appendChild(li);
+  });
+};
+
+// Event listener for when the song finishes
+audio.addEventListener('ended', () => {
+  playNextSong(); // Automatically play next song when current song ends
+});
+
+// Event listeners for various buttons and inputs
+searchInput.addEventListener('input', filterSongs);
+playPauseButton.addEventListener('click', togglePlayPause);
+nextButton.addEventListener('click', playNextSong);
+prevButton.addEventListener('click', playPrevSong);
+progress.addEventListener('input', handleSeek);
+volume.addEventListener('input', updateVolume);
+
+// Load the first song and render the song list initially
+loadSong(currentSongIndex);
+renderSongList(SONGS);
+setInterval(updateProgress, 1000); // Update progress bar every second
+
+</script>
 </body>
 </html>
