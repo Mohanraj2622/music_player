@@ -1,5 +1,6 @@
 // DOM Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
+  setupMediaSession();
   // Logout functionality
   const logoutButton = document.querySelector(".logout-btn");
   logoutButton.addEventListener("click", logout);
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // User Data with Device Tracking
 const validUsers = [
   { 
-    username: "mohan", 
+    username: "Mohan", 
     password: "123", 
     sessionActive: false, 
     lastLogin: null, 
@@ -34,8 +35,32 @@ const validUsers = [
     activeSessions: []
   },
   { 
-    username: "nandha",
+    username: "sathiya",
+    password: "2005",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "Praveen",
+    password: "2018",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "Nandha",
     password: "naddy@2002",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "ari",
+    password: "0000",
     sessionActive: false,
     lastLogin: null, 
     maxSessions: 1,
