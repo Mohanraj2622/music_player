@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
             coverUrl: "https://example.com/cover2.jpg",
           },
           {
-            title: "Thli Thli Mazhaiyaai",
+            title: "Thuli Thuli Mazhaiyaai",
             artist: "yuvan",
             url: "Thuli-Thuli-Mazhaiyaai.mp3",
             coverUrl: "https://example.com/cover2.jpg",
