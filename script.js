@@ -1,19 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
   const logoutButton = document.querySelector(".logout-btn");
+  const splashScreen = document.querySelector(".splash-screen");
+  const mainContent = document.querySelector(".main-content");
 
   // Logout functionality
   const logout = () => {
+    const loggedInUser = sessionStorage.getItem("loggedInUser");
+    const user = validUsers.find(u => u.username === loggedInUser);
+
+    if (user) {
+      // Mark user's session as inactive
+      user.sessionActive = false;
+      user.lastLogin = null;
+    }
+
+    // Clear session storage
     sessionStorage.removeItem("loggedInUser");
-    alert("You have been logged out!");
-    location.reload(); // Reload the page to reset the app state
+    alert("Logged out successfully!");
+
+    // Reset UI
+    document.querySelector(".player-container").style.display = "none";
+    document.querySelector(".login-container").style.display = "block";
   };
 
   logoutButton.addEventListener("click", logout);
 
-  // Existing splash screen functionality
-  const splashScreen = document.querySelector(".splash-screen");
-  const mainContent = document.querySelector(".main-content");
-
+  // Splash Screen Functionality
   setTimeout(() => {
     splashScreen.style.opacity = "0";
     splashScreen.style.pointerEvents = "none";
@@ -22,28 +34,23 @@ document.addEventListener("DOMContentLoaded", () => {
       mainContent.style.display = "block";
     }, 500);
   }, 500);
-});
 
-// Splash Screen Functionality
-document.addEventListener("DOMContentLoaded", () => {
-  const splashScreen = document.querySelector(".splash-screen");
-  setTimeout(() => {
-    splashScreen.style.opacity = "0";
-    splashScreen.style.pointerEvents = "none";
-    setTimeout(() => splashScreen.style.display = "none", 500);
-  }, 1500); // Adjust splash screen duration
+  // Auto-login if session exists
+  const loggedInUser = sessionStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    showPlayer(loggedInUser);
+  }
 });
 
 // User Data
 const validUsers = [
-  { username: "mohan", password: "123", sessionActive: false },
-  { username: "nandha", password: "naddy@2002", sessionActive: false },
-  { username: "sathiya", password: "2005", sessionActive: false },
-  { username: "ari", password: "0000", sessionActive: false },
-  { username: "ar", password: "00", sessionActive: false },
-  { username: "ai", password: "0", sessionActive: false },
+  { username: "mohan", password: "123", sessionActive: false, lastLogin: null, maxSessions: 1 },
+  { username: "nandha", password: "naddy@2002", sessionActive: false, lastLogin: null, maxSessions: 1 },
+  { username: "sathiya", password: "2005", sessionActive: false, lastLogin: null, maxSessions: 1 },
+  { username: "ari", password: "0000", sessionActive: false, lastLogin: null, maxSessions: 1 },
+  { username: "ar", password: "00", sessionActive: false, lastLogin: null, maxSessions: 1 },
+  { username: "ai", password: "0", sessionActive: false, lastLogin: null, maxSessions: 1 },
 ];
-
 
 // Show Player and Hide Login
 function showPlayer(username) {
@@ -52,31 +59,7 @@ function showPlayer(username) {
   document.getElementById("user").textContent = username;
 }
 
-// Logout Functionality
-function logout() {
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  const user = validUsers.find(u => u.username === loggedInUser);
-
-  if (user) {
-    user.sessionActive = false;
-  }
-  sessionStorage.removeItem("loggedInUser");
-  alert("Logged out successfully!");
-
-  // Reset UI
-  document.querySelector(".player-container").style.display = "none";
-  document.querySelector(".login-container").style.display = "block";
-}
-
-// Auto-login if session exists
-document.addEventListener("DOMContentLoaded", () => {
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  if (loggedInUser) {
-    showPlayer(loggedInUser);
-  }
-});
-
-// Enhanced Validate User Login Function
+// Validate User Login Function
 function validateUser() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
@@ -107,51 +90,6 @@ function validateUser() {
   }
 }
 
-// Enhanced Logout Functionality
-function logout() {
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  const user = validUsers.find(u => u.username === loggedInUser);
-
-  if (user) {
-    // Mark user's session as inactive
-    user.sessionActive = false;
-    user.lastLogin = null;
-  }
-
-  // Clear session storage
-  sessionStorage.removeItem("loggedInUser");
-
-  alert("Logged out successfully!");
-
-  // Reset UI
-  document.querySelector(".player-container").style.display = "none";
-  document.querySelector(".login-container").style.display = "block";
-}
-
-// Existing DOM Event Listeners
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutButton = document.querySelector(".logout-btn");
-  logoutButton.addEventListener("click", logout);
-
-  // Auto-login if session exists
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  if (loggedInUser) {
-    showPlayer(loggedInUser);
-  }
-
-  // Splash Screen Functionality
-  const splashScreen = document.querySelector(".splash-screen");
-  const mainContent = document.querySelector(".main-content");
-
-  setTimeout(() => {
-    splashScreen.style.opacity = "0";
-    splashScreen.style.pointerEvents = "none";
-    setTimeout(() => {
-      splashScreen.style.display = "none";
-      mainContent.style.display = "block";
-    }, 500);
-  }, 500);
-});
 
 // Existing code remains the same
 const SONGS = [
