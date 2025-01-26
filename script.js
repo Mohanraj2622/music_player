@@ -120,6 +120,35 @@ function generateDeviceId() {
     return v.toString(16);
   });
 }
+// Media Session API Integration
+function setupMediaSession() {
+  const audioElement = document.querySelector("audio");
+  const currentSong = SONGS[0]; // Assuming the first song is the current one for simplicity
+
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentSong.title,
+      artist: currentSong.artist,
+      album: "Sample Album",
+      artwork: [
+        { src: currentSong.coverUrl, sizes: "512x512", type: "image/png" }
+      ]
+    });
+
+    navigator.mediaSession.setActionHandler("play", () => audioElement.play());
+    navigator.mediaSession.setActionHandler("pause", () => audioElement.pause());
+    navigator.mediaSession.setActionHandler("seekbackward", (details) => {
+      audioElement.currentTime = Math.max(audioElement.currentTime - (details.seekOffset || 10), 0);
+    });
+    navigator.mediaSession.setActionHandler("seekforward", (details) => {
+      audioElement.currentTime = Math.min(audioElement.currentTime + (details.seekOffset || 10), audioElement.duration);
+    });
+    navigator.mediaSession.setActionHandler("stop", () => {
+      audioElement.pause();
+      audioElement.currentTime = 0;
+    });
+  }
+}
 
 // Existing code remains the same
 const SONGS = [
