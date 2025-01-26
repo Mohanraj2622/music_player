@@ -1,0 +1,364 @@
+
+:root {
+    --bg-dark: #373838;
+    --sidebar-bg: #040404;
+    --accent-green: #1DB954;
+    --text-light: #fffdfd;
+    --text-gray: #fafafa;
+    --player-bg: #05b14c;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    height: 100vh;
+    overflow: hidden;
+    margin-top: 70px;
+  }
+
+    /* Splash Screen */
+    .splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #9b9e9b;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+      }
+    
+      .splash-screen .app-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+    
+      /* Login Container */
+      .login-container {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+      }
+    
+      .login-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+    
+      .login-container label {
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    
+      .login-container input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+    
+      .login-container button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+    
+      .login-container button:hover {
+        background-color: #45a049;
+      }
+    
+      .Welcome {
+        text-align: center;
+        position: fixed;
+        top: 35px; /* Adjust top value to position it correctly below the header */
+        left: 50%;
+        transform: translateX(-50%); /* Center the welcome message horizontally */
+        font-size: 1rem; /* Adjust the font size */
+       
+        z-index: 999; /* Ensure it stays on top of other content */
+        
+       
+      }
+      
+    
+  .logo-container {
+    text-align: center;
+  }
+
+  .logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    background-color: #040404;
+  }
+
+  .app-title {
+    font-size: 24px;
+    color: var(--text-light);
+  }
+
+
+  .header {
+    font-size: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 2px;
+    padding: 5px; /* Increased padding to make it more visible */
+    text-align: center;
+    background: linear-gradient(45deg, #ff6f61, #f6d365, #00bcd4, #8e44ad);
+    background-size: 50% 50%;
+    animation: gradientAnimation 10s ease infinite;
+    -webkit-background-clip: text;
+    color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease-in-out;
+    z-index: 999; /* Ensure it appears on top of other content */
+  }
+
+  /* Gradient animation */
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Subtle hover effect to enhance interaction */
+  .header:hover {
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+
+  /* Search Bar */
+  .search-bar {
+    margin-bottom: 20px;
+
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 10px;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    color: red;
+  }
+
+  /* Track List */
+  .track-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    list-style: none;
+    margin-bottom: 10px;
+  }
+
+  .track {
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border-bottom: 1px solid #adabab;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .track:hover {
+    background-color: #110e0e;
+  }
+
+  .track img {
+    width: 10px;
+    height: 10px;
+    margin-right: 15px;
+    border-radius: 5px;
+  }
+
+  .track-info {
+    flex-grow: 1;
+  }
+
+  .track-title {
+    font-size: 16px;
+  }
+
+  .track-artist {
+    font-size: 12px;
+    color: var(--text-gray);
+  }
+
+  /* Player */
+  .player {
+    background-color: var(--player-bg);
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    padding-bottom: 30px;
+  }
+
+  .player #cover {
+    width: 0%;
+    height: 0%;
+    border-radius: 10px;
+    margin: 0 auto 20px;
+    display: none;
+  }
+
+  .player #title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .player #artist {
+    color: var(--text-gray);
+    margin-bottom: 10px;
+  }
+
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .progress-bar input {
+    flex-grow: 1;
+  }
+
+  .player-controls {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 17px;
+    overflow-y: auto;
+  }
+
+  .player-controls button {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .player-controls button:hover {
+    color: var(--accent-green);
+  }
+
+  .volume-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: yellow;
+    gap: 10px;
+  }
+
+  .spotify-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    margin-top: 60px;
+}
+
+.track-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    list-style: none;
+    padding-bottom: 10px;
+}
+
+.player-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px;
+ 
+}
+  /* Bottom Menu */
+  .bottom-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: space-around;
+    padding: 7px 0;
+  }
+
+  .menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-gray);
+  }
+
+  .menu-item i {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  .menu-item.active,
+  .menu-item:hover {
+    color: var(--accent-green);
+  }
+
+  .bottom-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    z-index: 20;
+}
+
+
+
+
+
