@@ -1,6 +1,5 @@
 // DOM Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
-  setupMediaSession();
   // Logout functionality
   const logoutButton = document.querySelector(".logout-btn");
   logoutButton.addEventListener("click", logout);
@@ -160,35 +159,6 @@ function generateDeviceId() {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
-}
-// Media Session API Integration
-function setupMediaSession() {
-  const audioElement = document.querySelector("audio");
-  const currentSong = SONGS[0]; // Assuming the first song is the current one for simplicity
-
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: currentSong.title,
-      artist: currentSong.artist,
-      album: "Sample Album",
-      artwork: [
-        { src: currentSong.coverUrl, sizes: "512x512", type: "image/png" }
-      ]
-    });
-
-    navigator.mediaSession.setActionHandler("play", () => audioElement.play());
-    navigator.mediaSession.setActionHandler("pause", () => audioElement.pause());
-    navigator.mediaSession.setActionHandler("seekbackward", (details) => {
-      audioElement.currentTime = Math.max(audioElement.currentTime - (details.seekOffset || 10), 0);
-    });
-    navigator.mediaSession.setActionHandler("seekforward", (details) => {
-      audioElement.currentTime = Math.min(audioElement.currentTime + (details.seekOffset || 10), audioElement.duration);
-    });
-    navigator.mediaSession.setActionHandler("stop", () => {
-      audioElement.pause();
-      audioElement.currentTime = 0;
-    });
-  }
 }
 
 // Existing code remains the same
@@ -1670,6 +1640,7 @@ const currentTimeDisplay = document.getElementById('currentTime');
 const durationDisplay = document.getElementById('duration');
 const volume = document.getElementById('volume');
 
+// Load a song by index
 const loadSong = (index) => {
   const song = SONGS[index];
   title.textContent = song.title;
@@ -1679,36 +1650,44 @@ const loadSong = (index) => {
   progress.value = 0;
   currentTimeDisplay.textContent = "0:00";
   durationDisplay.textContent = "0:00";
+
+  updateMediaSession(song); // Update Media Session API metadata
 };
 
+// Play the current song
 const playSong = () => {
   isPlaying = true;
   audio.play();
   playPauseButton.textContent = '⏸️';
 };
 
+// Pause the current song
 const pauseSong = () => {
   isPlaying = false;
   audio.pause();
   playPauseButton.textContent = '▶️';
 };
 
+// Toggle play/pause
 const togglePlayPause = () => {
   isPlaying ? pauseSong() : playSong();
 };
 
+// Play the next song
 const playNextSong = () => {
   currentSongIndex = (currentSongIndex + 1) % SONGS.length;
   loadSong(currentSongIndex);
   playSong();
 };
 
+// Play the previous song
 const playPrevSong = () => {
   currentSongIndex = (currentSongIndex - 1 + SONGS.length) % SONGS.length;
   loadSong(currentSongIndex);
   playSong();
 };
 
+// Update the progress bar and time display
 const updateProgress = () => {
   const { currentTime, duration } = audio;
   progress.value = (currentTime / duration) * 100 || 0;
@@ -1716,27 +1695,32 @@ const updateProgress = () => {
   durationDisplay.textContent = formatTime(duration);
 };
 
+// Format time for display
 const formatTime = (time) => {
   const minutes = Math.floor(time / 60);
   const seconds = Math.floor(time % 60).toString().padStart(2, '0');
   return `${minutes}:${seconds}`;
 };
 
+// Handle seeking through the progress bar
 const handleSeek = (e) => {
   const seekTime = (e.target.value / 100) * audio.duration;
   audio.currentTime = seekTime;
 };
 
+// Update the volume
 const updateVolume = (e) => {
   audio.volume = e.target.value / 100;
 };
 
+// Filter the song list based on the search input
 const filterSongs = () => {
   const query = searchInput.value.toLowerCase();
   const filteredSongs = SONGS.filter((song) => song.title.toLowerCase().includes(query));
   renderSongList(filteredSongs);
 };
 
+// Render the song list in the UI
 const renderSongList = (songs) => {
   trackList.innerHTML = '';
   songs.forEach((song) => {
@@ -1753,9 +1737,28 @@ const renderSongList = (songs) => {
   });
 };
 
-audio.addEventListener('ended', () => {
-  playNextSong();
-});
+// Media Session API: Update metadata and action handlers
+const updateMediaSession = (song) => {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title,
+      artist: song.artist,
+      album: "Your Album Name",
+      artwork: [
+        { src: song.coverUrl, sizes: "512x512", type: "image/png" }
+      ]
+    });
+
+    navigator.mediaSession.setActionHandler("play", playSong);
+    navigator.mediaSession.setActionHandler("pause", pauseSong);
+    navigator.mediaSession.setActionHandler("nexttrack", playNextSong);
+    navigator.mediaSession.setActionHandler("previoustrack", playPrevSong);
+  }
+};
+
+// Event listeners for audio and controls
+audio.addEventListener('ended', playNextSong);
+audio.addEventListener('timeupdate', updateProgress);
 
 searchInput.addEventListener('input', filterSongs);
 playPauseButton.addEventListener('click', togglePlayPause);
@@ -1764,6 +1767,6 @@ prevButton.addEventListener('click', playPrevSong);
 progress.addEventListener('input', handleSeek);
 volume.addEventListener('input', updateVolume);
 
+// Initial setup
 loadSong(currentSongIndex);
 renderSongList(SONGS);
-setInterval(updateProgress, 1000);
