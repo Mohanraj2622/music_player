@@ -66,6 +66,22 @@ const validUsers = [
     maxSessions: 1,
     activeSessions: []
   },
+      { 
+    username: "Preethi",
+    password: "2002",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+      { 
+    username: "Alainila",
+    password: "2025",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
   // Other users...
 ];
 
