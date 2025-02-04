@@ -27,8 +27,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // User Data with Device Tracking
 const validUsers = [
-  { username: "Mohan", password: "123", sessionActive: false, lastLogin: null, maxSessions: 1, activeSessions: [] },
-  { username: "nandha", password: "naddy@2002", sessionActive: false, lastLogin: null, maxSessions: 1, activeSessions: [] },
+  { 
+    username: "Mohan", 
+    password: "123", 
+    sessionActive: false, 
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+  { 
+    username: "sathiya",
+    password: "2005",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "Praveen",
+    password: "2018",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "Nandha",
+    password: "naddy@2002",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "ari",
+    password: "0000",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+      { 
+    username: "Preethi",
+    password: "2002",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+      { 
+    username: "Alainila",
+    password: "2025",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+  // Other users...
 ];
 
 // Show Player and Hide Login
@@ -1689,15 +1744,6 @@ const renderSongList = (songs) => {
     trackList.appendChild(li);
   });
 };
-
-// Function to update the song count
-function updateSongCount() {
-  const songCountElement = document.getElementById("songCount");
-  songCountElement.textContent = `Total Songs: ${SONGS.length}`;
-}
-
-// Call function to display the count on page load
-updateSongCount();
 
 // Media Session API: Update metadata and action handlers
 const updateMediaSession = (song) => {
