@@ -1,7 +1,5 @@
 // DOM Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
-  setupMediaSession();
-
   // Logout functionality
   const logoutButton = document.querySelector(".logout-btn");
   logoutButton.addEventListener("click", logout);
@@ -27,8 +25,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // User Data with Device Tracking
 const validUsers = [
-  { username: "Mohan", password: "123", sessionActive: false, lastLogin: null, maxSessions: 1, activeSessions: [] },
-  { username: "nandha", password: "naddy@2002", sessionActive: false, lastLogin: null, maxSessions: 1, activeSessions: [] },
+  { 
+    username: "Mohan", 
+    password: "123", 
+    sessionActive: false, 
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+  { 
+    username: "sathiya",
+    password: "2005",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "Praveen",
+    password: "2018",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "Nandha",
+    password: "naddy@2002",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+    { 
+    username: "ari",
+    password: "0000",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+      { 
+    username: "Preethi",
+    password: "2002",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+      { 
+    username: "Alainila",
+    password: "2025",
+    sessionActive: false,
+    lastLogin: null, 
+    maxSessions: 1,
+    activeSessions: []
+  },
+  // Other users...
 ];
 
 // Show Player and Hide Login
@@ -45,6 +98,7 @@ function validateUser() {
   const user = validUsers.find(u => u.username === username && u.password === password);
 
   if (user) {
+    // Check for active sessions and session limits
     const currentDeviceId = generateDeviceId();
     const activeSessionsForUser = user.activeSessions.filter(s => s.deviceId !== currentDeviceId);
 
@@ -53,10 +107,15 @@ function validateUser() {
       return;
     }
 
+    // Mark user as logged in
     user.sessionActive = true;
     user.lastLogin = new Date().toISOString();
-    user.activeSessions.push({ deviceId: currentDeviceId, loginTime: user.lastLogin });
+    user.activeSessions.push({ 
+      deviceId: currentDeviceId,
+      loginTime: user.lastLogin
+    });
 
+    // Store login information in session storage
     sessionStorage.setItem("loggedInUser", username);
     sessionStorage.setItem("deviceId", currentDeviceId);
 
@@ -74,44 +133,32 @@ function logout() {
   const user = validUsers.find(u => u.username === loggedInUser);
 
   if (user) {
+    // Remove user's session from active sessions
     user.activeSessions = user.activeSessions.filter(s => s.deviceId !== deviceId);
+
+    // Mark user's session as inactive if no active sessions remain
     if (user.activeSessions.length === 0) {
       user.sessionActive = false;
       user.lastLogin = null;
     }
   }
 
+  // Clear session storage
   sessionStorage.removeItem("loggedInUser");
   sessionStorage.removeItem("deviceId");
   alert("Logged out successfully!");
 
+  // Reset UI
   document.querySelector(".player-container").style.display = "none";
   document.querySelector(".login-container").style.display = "block";
 }
 
-// Generate Unique Device ID
+// Helper function to generate a unique device ID
 function generateDeviceId() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
-}
-
-// WebViewString Communication with MIT App Inventor
-function updateAppInventorState(state) {
-  if (window.AppInventor) {
-    window.AppInventor.setWebViewString(state);
-  }
-}
-
-// Media Session API Integration
-function setupMediaSession() {
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.setActionHandler("play", playSong);
-    navigator.mediaSession.setActionHandler("pause", pauseSong);
-    navigator.mediaSession.setActionHandler("nexttrack", playNextSong);
-    navigator.mediaSession.setActionHandler("previoustrack", playPrevSong);
-  }
 }
 
 // Existing code remains the same
@@ -135,6 +182,13 @@ const SONGS = [
     url: "Aasa Kooda.mp3",
     coverUrl: "https://example.com/cover2.jpg",
   },
+    {
+    title: "Yendi Unna Naan",
+    artist: "Nishan k",
+    url: "Yendi Unna Naan (Azhage Azhage En Azhage) .mp3",
+    coverUrl: "https://example.com/cover2.jpg",
+  },
+  
   {
     title: "Adangatha Asuran",
     artist: "A.R Rahman",
@@ -1577,6 +1631,7 @@ const SONGS = [
 
 let currentSongIndex = 0;
 let isPlaying = false;
+
 const audio = new Audio();
 const trackList = document.getElementById('trackList');
 const searchInput = document.getElementById('search');
@@ -1602,7 +1657,8 @@ const loadSong = (index) => {
   progress.value = 0;
   currentTimeDisplay.textContent = "0:00";
   durationDisplay.textContent = "0:00";
-  updateMediaSession(song);
+
+  updateMediaSession(song); // Update Media Session API metadata
 };
 
 // Play the current song
@@ -1659,9 +1715,6 @@ const handleSeek = (e) => {
   audio.currentTime = seekTime;
 };
 
-// Update WebViewString to prevent App Inventor from stopping
-updateAppInventorState("Playing: " + SONGS[currentSongIndex].title + " - " + Math.floor(audio.currentTime) + "s");
-
 // Update the volume
 const updateVolume = (e) => {
   audio.volume = e.target.value / 100;
@@ -1710,14 +1763,6 @@ const updateMediaSession = (song) => {
   }
 };
 
-// Ensure playback continues after screen is off
-document.addEventListener("visibilitychange", function () {
-  if (document.hidden) {
-    playSong();
-  }
-});
-
-
 // Event listeners for audio and controls
 audio.addEventListener('ended', playNextSong);
 audio.addEventListener('timeupdate', updateProgress);
@@ -1732,6 +1777,3 @@ volume.addEventListener('input', updateVolume);
 // Initial setup
 loadSong(currentSongIndex);
 renderSongList(SONGS);
-document.getElementById("playPause").addEventListener('click', () => isPlaying ? pauseSong() : playSong());
-document.getElementById("next").addEventListener('click', playNextSong);
-document.getElementById("prev").addEventListener('click', playPrevSong);
