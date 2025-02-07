@@ -1,90 +1,84 @@
-// DOM Event Listeners
+document.addEventListener("keydown", function (event) {
+  if (
+    event.ctrlKey &&
+    (event.key === "=" || event.key === "-" || event.key === "0")
+  ) {
+    event.preventDefault();
+  }
+});
+
+document.addEventListener("wheel", function (event) {
+  if (event.ctrlKey) {
+    event.preventDefault();
+  }
+}, { passive: false });
+
 document.addEventListener("DOMContentLoaded", () => {
   setupMediaSession();
+  initializeSplashScreen();
 
-  // Logout functionality
-  const logoutButton = document.querySelector(".logout-btn");
-  logoutButton.addEventListener("click", logout);
+  // Check if a user is logged in and if their session is still valid
+  if (sessionStorage.getItem("loggedInUser")) {
+    checkDailyLogin();
+  }
 
-  // Splash Screen Functionality
-  const splashScreen = document.querySelector(".splash-screen");
-  const mainContent = document.querySelector(".main-content");
-  setTimeout(() => {
-    splashScreen.style.opacity = "0";
-    splashScreen.style.pointerEvents = "none";
-    setTimeout(() => {
-      splashScreen.style.display = "none";
-      mainContent.style.display = "block";
-    }, 500);
-  }, 500);
+  document.querySelector(".logout-btn").addEventListener("click", logout);
 
   // Auto-login if session exists
   const loggedInUser = sessionStorage.getItem("loggedInUser");
-  if (loggedInUser) {
-    showPlayer(loggedInUser);
-  }
+  if (loggedInUser) showPlayer(loggedInUser);
 });
 
 // User Data with Device Tracking
 const validUsers = [
-  { 
-    username: "Mohan", 
-    password: "123", 
-    sessionActive: false, 
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-  { 
-    username: "sathiya",
-    password: "2005",
-    sessionActive: false,
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-    { 
-    username: "Praveen",
-    password: "2018",
-    sessionActive: false,
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-    { 
-    username: "Nandha",
-    password: "naddy@2002",
-    sessionActive: false,
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-    { 
-    username: "ari",
-    password: "0000",
-    sessionActive: false,
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-      { 
-    username: "Preethi",
-    password: "2002",
-    sessionActive: false,
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-      { 
-    username: "Alainila",
-    password: "2025",
-    sessionActive: false,
-    lastLogin: null, 
-    maxSessions: 1,
-    activeSessions: []
-  },
-  // Other users...
+  { username: "Mohan", password: "123", maxSessions: 1, activeSessions: [] },
+  { username: "sathiya", password: "2005", maxSessions: 1, activeSessions: [] },
+  { username: "Praveen", password: "2018", maxSessions: 1, activeSessions: [] },
+  { username: "Nandha", password: "naddy@2002", maxSessions: 1, activeSessions: [] },
+  { username: "ari", password: "0000", maxSessions: 1, activeSessions: [] },
+  { username: "Preethi", password: "2002", maxSessions: 1, activeSessions: [] },
+  { username: "Alainila", password: "2025", maxSessions: 1, activeSessions: [] }
 ];
+
+// Validate User Login
+function validateUser() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const user = validUsers.find(u => u.username === username && u.password === password);
+
+  if (!user) return showMessage("Invalid username or password!", "red");
+
+  const currentDeviceId = generateDeviceId();
+  const activeSessions = user.activeSessions.filter(s => s.deviceId !== currentDeviceId);
+
+  if (activeSessions.length >= user.maxSessions) {
+    return showMessage(`Maximum logins (${user.maxSessions}) reached for this account.`, "red");
+  }
+
+  // Store login details and allow access
+  user.activeSessions.push({ deviceId: currentDeviceId, loginTime: new Date().toISOString() });
+
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+  sessionStorage.setItem("loggedInUser", username);
+  sessionStorage.setItem("deviceId", currentDeviceId);
+  localStorage.setItem("loginDate", today);
+
+  showMessage("Login successful!", "green");
+  showPlayer(username);
+}
+
+// Check if the user should be logged out at midnight
+function checkDailyLogin() {
+  const loggedInUser = sessionStorage.getItem("loggedInUser");
+  if (!loggedInUser) return; // No user is logged in, skip auto-logout check
+
+  const storedDate = localStorage.getItem("loginDate");
+  const today = new Date().toISOString().split('T')[0];
+
+  if (storedDate !== today) {
+    logout(true);
+  }
+}
 
 // Show Player and Hide Login
 function showPlayer(username) {
@@ -93,81 +87,92 @@ function showPlayer(username) {
   document.getElementById("user").textContent = username;
 }
 
-// Validate User Login Function
-function validateUser() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const user = validUsers.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    const currentDeviceId = generateDeviceId();
-    const activeSessionsForUser = user.activeSessions.filter(s => s.deviceId !== currentDeviceId);
-
-    if (activeSessionsForUser.length >= user.maxSessions) {
-      alert(`Maximum number of simultaneous logins (${user.maxSessions}) reached for this account.`);
-      return;
-    }
-
-    user.sessionActive = true;
-    user.lastLogin = new Date().toISOString();
-    user.activeSessions.push({ deviceId: currentDeviceId, loginTime: user.lastLogin });
-
-    sessionStorage.setItem("loggedInUser", username);
-    sessionStorage.setItem("deviceId", currentDeviceId);
-
-    alert("Login successful!");
-    showPlayer(username);
-  } else {
-    alert("Invalid credentials.");
-  }
-}
-
 // Logout Functionality
-function logout() {
+function logout(autoLogout = false) {
   const loggedInUser = sessionStorage.getItem("loggedInUser");
   const deviceId = sessionStorage.getItem("deviceId");
   const user = validUsers.find(u => u.username === loggedInUser);
 
   if (user) {
     user.activeSessions = user.activeSessions.filter(s => s.deviceId !== deviceId);
-    if (user.activeSessions.length === 0) {
-      user.sessionActive = false;
-      user.lastLogin = null;
-    }
   }
 
-  sessionStorage.removeItem("loggedInUser");
-  sessionStorage.removeItem("deviceId");
-  alert("Logged out successfully!");
+  sessionStorage.clear();
+  localStorage.removeItem("loginDate");
 
-  document.querySelector(".player-container").style.display = "none";
-  document.querySelector(".login-container").style.display = "block";
+  showMessage(autoLogout ? "Session expired! Please log in again." : "Logged out successfully!", "red");
+
+  setTimeout(() => window.location.reload(), 2000);
+}
+
+// Function to display floating messages
+function showMessage(text, color) {
+  const message = document.createElement("div");
+  Object.assign(message.style, {
+    position: "fixed",
+    top: "10px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    padding: "10px 20px",
+    backgroundColor: color === "green" ? "#4caf50" : "#ff3b3b",
+    color: "white",
+    borderRadius: "5px",
+    zIndex: "1000"
+  });
+
+  message.textContent = text;
+  document.body.appendChild(message);
+
+  setTimeout(() => message.remove(), 3000);
 }
 
 // Generate Unique Device ID
 function generateDeviceId() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
   });
+}
+
+// Initialize Splash Screen
+function initializeSplashScreen() {
+  const splashScreen = document.querySelector(".splash-screen");
+  const mainContent = document.querySelector(".main-content");
+
+  setTimeout(() => {
+    splashScreen.style.opacity = "0";
+    splashScreen.style.pointerEvents = "none";
+    setTimeout(() => {
+      splashScreen.style.display = "none";
+      mainContent.style.display = "block";
+    }, 500);
+  }, 500);
 }
 
 // WebViewString Communication with MIT App Inventor
 function updateAppInventorState(state) {
-  if (window.AppInventor) {
-    window.AppInventor.setWebViewString(state);
-  }
+  if (window.AppInventor) window.AppInventor.setWebViewString(state);
+}
+
+// Update MIT App Inventor with Media Session Status
+function updateAppInventorWithMediaSessionStatus(status) {
+  if (window.AppInventor) window.AppInventor.setWebViewString("MediaSessionStatus: " + status);
 }
 
 // Media Session API Integration
 function setupMediaSession() {
-  if ('mediaSession' in navigator) {
+  if ("mediaSession" in navigator) {
     navigator.mediaSession.setActionHandler("play", playSong);
     navigator.mediaSession.setActionHandler("pause", pauseSong);
     navigator.mediaSession.setActionHandler("nexttrack", playNextSong);
     navigator.mediaSession.setActionHandler("previoustrack", playPrevSong);
+
+    updateAppInventorWithMediaSessionStatus("Media Session Enabled");
+  } else {
+    updateAppInventorWithMediaSessionStatus("Media Session Not Supported");
   }
 }
+
 
 // Existing code remains the same
 const SONGS = [
@@ -1634,7 +1639,6 @@ let isPlaying = false;
 const audio = new Audio();
 const trackList = document.getElementById('trackList');
 const searchInput = document.getElementById('search');
-
 const title = document.getElementById('title');
 const artist = document.getElementById('artist');
 const cover = document.getElementById('cover');
@@ -1646,17 +1650,44 @@ const currentTimeDisplay = document.getElementById('currentTime');
 const durationDisplay = document.getElementById('duration');
 const volume = document.getElementById('volume');
 
-// Load a song by index
 const loadSong = (index) => {
   const song = SONGS[index];
   title.textContent = song.title;
   artist.textContent = song.artist;
-  cover.src = song.coverUrl;
   audio.src = song.url;
   progress.value = 0;
   currentTimeDisplay.textContent = "0:00";
   durationDisplay.textContent = "0:00";
   updateMediaSession(song);
+
+  // Try to extract cover image from MP3 metadata
+  fetch(song.url)
+    .then(response => response.blob())
+    .then(blob => {
+      jsmediatags.read(blob, {
+        onSuccess: function (tag) {
+          const picture = tag.tags.picture;
+          if (picture) {
+            let base64String = "";
+            for (let i = 0; i < picture.data.length; i++) {
+              base64String += String.fromCharCode(picture.data[i]);
+            }
+            const base64 = btoa(base64String);
+            cover.src = `data:${picture.format};base64,${base64}`;
+          } else {
+            cover.src = song.coverUrl || "default-cover.jpg"; // Use array cover or fallback
+          }
+        },
+        onError: function (error) {
+          console.error("Error reading cover art:", error);
+          cover.src = song.coverUrl || "default-cover.jpg"; // Use array cover or fallback
+        }
+      });
+    })
+    .catch(error => {
+      console.error("Error fetching MP3 file:", error);
+      cover.src = song.coverUrl || "default-cover.jpg"; // Use array cover or fallback
+    });
 };
 
 // Play the current song
@@ -1744,23 +1775,66 @@ const renderSongList = (songs) => {
     trackList.appendChild(li);
   });
 };
-
-// Media Session API: Update metadata and action handlers
+// Function to update media session metadata and send status to App Inventor
 const updateMediaSession = (song) => {
   if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: song.title,
-      artist: song.artist,
-      album: "Your Album Name",
-      artwork: [
-        { src: song.coverUrl, sizes: "512x512", type: "image/png" }
-      ]
-    });
+    // Default to provided coverUrl or a fallback image
+    let artworkUrl = song.coverUrl || "default-cover.jpg";
 
-    navigator.mediaSession.setActionHandler("play", playSong);
-    navigator.mediaSession.setActionHandler("pause", pauseSong);
-    navigator.mediaSession.setActionHandler("nexttrack", playNextSong);
-    navigator.mediaSession.setActionHandler("previoustrack", playPrevSong);
+    // Try extracting embedded cover art from MP3 metadata
+    fetch(song.url)
+      .then(response => response.blob())
+      .then(blob => {
+        jsmediatags.read(blob, {
+          onSuccess: (tag) => {
+            const picture = tag.tags.picture;
+            if (picture) {
+              let base64String = "";
+              for (let i = 0; i < picture.data.length; i++) {
+                base64String += String.fromCharCode(picture.data[i]);
+              }
+              artworkUrl = `data:${picture.format};base64,${btoa(base64String)}`;
+            }
+
+            // Update media session with extracted or fallback artwork
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: song.title,
+              artist: song.artist,
+              album: song.album || "Unknown Album",
+              artwork: [{ src: artworkUrl, sizes: "512x512", type: "image/png" }]
+            });
+
+            // Send update to App Inventor
+            updateAppInventorWithMediaSessionStatus(`Metadata Updated: ${song.title}`);
+          },
+          onError: (error) => {
+            console.error("Error extracting metadata:", error);
+
+            // Use fallback cover if metadata extraction fails
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: song.title,
+              artist: song.artist,
+              album: song.album || "Unknown Album",
+              artwork: [{ src: artworkUrl, sizes: "512x512", type: "image/png" }]
+            });
+
+            updateAppInventorWithMediaSessionStatus(`Metadata Updated: ${song.title} (No Cover Found)`);
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching MP3 file:", error);
+
+        // Use fallback cover if fetching fails
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.title,
+          artist: song.artist,
+          album: song.album || "Unknown Album",
+          artwork: [{ src: artworkUrl, sizes: "512x512", type: "image/png" }]
+        });
+
+        updateAppInventorWithMediaSessionStatus(`Metadata Updated: ${song.title} (Failed to Fetch)`);
+      });
   }
 };
 
@@ -1769,20 +1843,17 @@ document.addEventListener("visibilitychange", function () {
   if (document.hidden) {
     playSong();
   }
-  
-});
 
+});
 
 // Event listeners for audio and controls
 audio.addEventListener('ended', playNextSong);
 audio.addEventListener('timeupdate', updateProgress);
-
 searchInput.addEventListener('input', filterSongs);
 playPauseButton.addEventListener('click', togglePlayPause);
 nextButton.addEventListener('click', playNextSong);
 prevButton.addEventListener('click', playPrevSong);
 progress.addEventListener('input', handleSeek);
-volume.addEventListener('input', updateVolume);
 
 // Initial setup
 loadSong(currentSongIndex);
