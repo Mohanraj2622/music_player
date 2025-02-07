@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alainila Musics</title>
+  <title>Alainila Player</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="Logo.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <body>
   <!-- Splash Screen -->
   <div class="splash-screen">
@@ -28,57 +29,53 @@
         <button type="submit">Login</button>
       </form>
     </div>
-    
     <div class="player-container" style="display: none;">
       <nav class="head_container">
         <h3 class="header">Alainila</h3>
-      <h4 class="Welcome">Welcome, <span id="user"></span>!</h4>
-      
+        <h4 class="Welcome">Welcome, <span id="user"></span>!</h4>
       </nav>
-        <div class="spotify-app">
-          <div class="container">
-            <div class="search-bar">
-              <input id="search" type="text" placeholder="Search for a song...">
+      <div class="spotify-app">
+        <div class="container">
+          <div class="search-bar">
+            <input id="search" type="text" placeholder="Search for a song...">
+          </div>
+          <ul id="trackList" class="track-list">
+            <!-- Track items will be dynamically added here -->
+            <li class="track">
+              <img src="/api/placeholder/50/50" alt="Track Cover">
+              <div class="track-info">
+                <div class="track-title">Track</div>
+                <div class="track-artist">Artist</div>
+              </div>
+            </li>
+          </ul>
+          <!--player control-->
+          <div class="player">
+            <img id="cover" src="/api/placeholder/50/50" alt="Album Cover">
+            <h3 id="title">Select a Song</h3>
+            <p id="artist">Artist</p>
+            <div class="progress-bar">
+              <span id="currentTime">0:00</span>
+              <input id="progress" type="range" min="0" max="100" value="0">
+              <span id="duration">0:00</span>
             </div>
-            <ul id="trackList" class="track-list">
-              <!-- Track items will be dynamically added here -->
-              <li class="track">
-                <!-- <img src="/api/placeholder/50/50" alt="Track Cover">-->
-                <div class="track-info">
-                  <div class="track-title">Track</div>
-                  <div class="track-artist">Artist</div>
-                </div>
-              </li>
-            </ul>
-            <div class="player">
-              <img id="cover" src="/api/placeholder/50/50" alt="Album Cover">
-              <h3 id="title">Select a Song</h3>
-              <p id="artist">Artist</p>
-
-              <div class="progress-bar">
-                <span id="currentTime">0:00</span>
-                <input id="progress" type="range" min="0" max="100" value="0">
-                <span id="duration">0:00</span>
-              </div>
-
-              <div class="player-controls">
-                <button id="prev" aria-label="Previous Song">⏮️</button>
-                <button id="playPause" aria-label="Play/Pause">▶️</button>
-                <button id="next" aria-label="Next Song">⏭️</button>
-              </div>
-
-              <div class="volume-controls">
-                <label for="volume">🔊</label>
-                <input id="volume" type="range" min="0" max="100" value="100">
-              </div>
+            <div class="player-controls">
+              <button id="prev" aria-label="Previous Song">⏮️</button>
+              <button id="playPause" aria-label="Play/Pause">▶️</button>
+              <button id="next" aria-label="Next Song">⏭️</button>
+            </div>
+            <div class="volume-controls">
+              <label for="volume">🔊</label>
+              <input id="volume" type="range" min="0" max="100" value="100">
             </div>
           </div>
         </div>
+      </div>
     </div>
     <div class="bottom-menu">
-      <a href="#" class="menu-item">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
+      <a href="feedback.html" class="menu-item">
+        <i class="fas fa-comment-alt"></i>
+        <span>Feedback</span>
       </a>
       <a href="#search" class="menu-item">
         <i class="fas fa-search"></i>
@@ -89,6 +86,9 @@
         <span>Logout</span>
       </a>
     </div>
-    <script src="script.js"></script>
+    <!-- jsmediatags Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.5/dist/jsmediatags.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
