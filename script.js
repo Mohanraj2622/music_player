@@ -287,6 +287,12 @@ const SONGS = [
     url: "Arabic-Kuthu---Halamithi-Habibo-MassTamilan.so.mp3",
     coverUrl: "https://example.com/cover2.jpg",
   },
+   {
+    title: "Yendi unna Naan",
+    artist: "Nishan",
+    url: "Yendi Unna Naan (Azhage Azhage En Azhage).mp3",
+    coverUrl: "https://example.com/cover2.jpg",
+  },
   {
     title: "Aye Aye Aye",
     artist: "Hiphop tamizha",
