@@ -1,3 +1,4 @@
+// Education Purpose Only
 document.addEventListener("keydown", function (event) {
   if (
     event.ctrlKey &&
