@@ -290,7 +290,7 @@ const SONGS = [
    {
     title: "Yendi unna Naan",
     artist: "Nishan",
-    url: "Yendi Unna Naan (Azhage Azhage En Azhage).mp3",
+    url: "Yendi_Unna_Naan.mp3",
     coverUrl: "https://example.com/cover2.jpg",
   },
   {
