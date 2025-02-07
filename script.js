@@ -207,6 +207,12 @@ const SONGS = [
     url: "Adada-Mazhaida.mp3",
     coverUrl: "https://example.com/cover2.jpg",
   },
+    {
+    title: "Yendi Unna Naan",
+    artist: "Nishan",
+    url: "Yendi Unna Naan (Azhage Azhage En Azhage).mp3",
+    coverUrl: "https://example.com/cover2.jpg",
+  },
   {
     title: "Adiye-Sakkarakatti",
     artist: "hiphop Tamizha",
