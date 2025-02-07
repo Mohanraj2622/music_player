@@ -13,132 +13,17 @@ document.addEventListener("wheel", function (event) {
   }
 }, { passive: false });
 
+// DOM Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
   setupMediaSession();
-  initializeSplashScreen();
 
-  // Check if a user is logged in and if their session is still valid
-  if (sessionStorage.getItem("loggedInUser")) {
-    checkDailyLogin();
-  }
+  // Logout functionality
+  const logoutButton = document.querySelector(".logout-btn");
+  logoutButton.addEventListener("click", logout);
 
-  document.querySelector(".logout-btn").addEventListener("click", logout);
-
-  // Auto-login if session exists
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  if (loggedInUser) showPlayer(loggedInUser);
-});
-
-// User Data with Device Tracking
-const validUsers = [
-  { username: "Mohan", password: "123", maxSessions: 1, activeSessions: [] },
-  { username: "sathiya", password: "2005", maxSessions: 1, activeSessions: [] },
-  { username: "Praveen", password: "2018", maxSessions: 1, activeSessions: [] },
-  { username: "Nandha", password: "naddy@2002", maxSessions: 1, activeSessions: [] },
-  { username: "ari", password: "0000", maxSessions: 1, activeSessions: [] },
-  { username: "Preethi", password: "2002", maxSessions: 1, activeSessions: [] },
-  { username: "Alainila", password: "2025", maxSessions: 1, activeSessions: [] }
-];
-
-// Validate User Login
-function validateUser() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const user = validUsers.find(u => u.username === username && u.password === password);
-
-  if (!user) return showMessage("Invalid username or password!", "red");
-
-  const currentDeviceId = generateDeviceId();
-  const activeSessions = user.activeSessions.filter(s => s.deviceId !== currentDeviceId);
-
-  if (activeSessions.length >= user.maxSessions) {
-    return showMessage(`Maximum logins (${user.maxSessions}) reached for this account.`, "red");
-  }
-
-  // Store login details and allow access
-  user.activeSessions.push({ deviceId: currentDeviceId, loginTime: new Date().toISOString() });
-
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-  sessionStorage.setItem("loggedInUser", username);
-  sessionStorage.setItem("deviceId", currentDeviceId);
-  localStorage.setItem("loginDate", today);
-
-  showMessage("Login successful!", "green");
-  showPlayer(username);
-}
-
-// Check if the user should be logged out at midnight
-function checkDailyLogin() {
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  if (!loggedInUser) return; // No user is logged in, skip auto-logout check
-
-  const storedDate = localStorage.getItem("loginDate");
-  const today = new Date().toISOString().split('T')[0];
-
-  if (storedDate !== today) {
-    logout(true);
-  }
-}
-
-// Show Player and Hide Login
-function showPlayer(username) {
-  document.querySelector(".login-container").style.display = "none";
-  document.querySelector(".player-container").style.display = "block";
-  document.getElementById("user").textContent = username;
-}
-
-// Logout Functionality
-function logout(autoLogout = false) {
-  const loggedInUser = sessionStorage.getItem("loggedInUser");
-  const deviceId = sessionStorage.getItem("deviceId");
-  const user = validUsers.find(u => u.username === loggedInUser);
-
-  if (user) {
-    user.activeSessions = user.activeSessions.filter(s => s.deviceId !== deviceId);
-  }
-
-  sessionStorage.clear();
-  localStorage.removeItem("loginDate");
-
-  showMessage(autoLogout ? "Session expired! Please log in again." : "Logged out successfully!", "red");
-
-  setTimeout(() => window.location.reload(), 2000);
-}
-
-// Function to display floating messages
-function showMessage(text, color) {
-  const message = document.createElement("div");
-  Object.assign(message.style, {
-    position: "fixed",
-    top: "10px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    padding: "10px 20px",
-    backgroundColor: color === "green" ? "#4caf50" : "#ff3b3b",
-    color: "white",
-    borderRadius: "5px",
-    zIndex: "1000"
-  });
-
-  message.textContent = text;
-  document.body.appendChild(message);
-
-  setTimeout(() => message.remove(), 3000);
-}
-
-// Generate Unique Device ID
-function generateDeviceId() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
-    const r = Math.random() * 16 | 0;
-    return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
-
-// Initialize Splash Screen
-function initializeSplashScreen() {
+  // Splash Screen Functionality
   const splashScreen = document.querySelector(".splash-screen");
   const mainContent = document.querySelector(".main-content");
-
   setTimeout(() => {
     splashScreen.style.opacity = "0";
     splashScreen.style.pointerEvents = "none";
@@ -147,32 +32,209 @@ function initializeSplashScreen() {
       mainContent.style.display = "block";
     }, 500);
   }, 500);
+
+  // Auto-login if session exists
+  const loggedInUser = sessionStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    showPlayer(loggedInUser);
+  }
+});
+
+// User Data with Device Tracking
+const validUsers = [
+  {
+    username: "Mohan",
+    password: "123",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  {
+    username: "sathiya",
+    password: "2005",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  {
+    username: "Praveen",
+    password: "2018",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  {
+    username: "Nandha",
+    password: "naddy@2002",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  {
+    username: "ari",
+    password: "0000",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  {
+    username: "Preethi",
+    password: "2002",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  {
+    username: "Alainila",
+    password: "2025",
+    sessionActive: false,
+    lastLogin: null,
+    maxSessions: 1,
+    activeSessions: []
+  },
+  // Other users...
+];
+
+// Show Player and Hide Login
+function showPlayer(username) {
+  document.querySelector(".login-container").style.display = "none";
+  document.querySelector(".player-container").style.display = "block";
+  document.getElementById("user").textContent = username;
+}
+
+function validateUser() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const user = validUsers.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    const currentDeviceId = generateDeviceId();
+    const activeSessionsForUser = user.activeSessions.filter(s => s.deviceId !== currentDeviceId);
+
+    if (activeSessionsForUser.length >= user.maxSessions) {
+      showMessage(`Maximum logins (${user.maxSessions}) reached for this account.`, "red");
+      return;
+    }
+
+    user.sessionActive = true;
+    user.lastLogin = new Date().toISOString();
+    user.activeSessions.push({ deviceId: currentDeviceId, loginTime: user.lastLogin });
+
+    sessionStorage.setItem("loggedInUser", username);
+    sessionStorage.setItem("deviceId", currentDeviceId);
+
+    showMessage("Login successful!", "green");
+
+    showPlayer(username);
+  } else {
+    showMessage("Invalid username or password!", "red");
+  }
+}
+
+// Function to display floating message
+function showMessage(text, color) {
+  const message = document.createElement("div");
+  message.textContent = text;
+  message.style.position = "fixed";
+  message.style.top = "10px";
+  message.style.left = "50%";
+  message.style.transform = "translateX(-50%)";
+  message.style.padding = "10px 20px";
+  message.style.backgroundColor = color === "green" ? "#4caf50" : "#ff3b3b";
+  message.style.color = "white";
+  message.style.borderRadius = "5px";
+  message.style.zIndex = "1000";
+  document.body.appendChild(message);
+
+  // Remove the message after 3 seconds
+  setTimeout(() => {
+    message.remove();
+  }, 3000);
+}
+
+// Logout Functionality
+function logout() {
+  const loggedInUser = sessionStorage.getItem("loggedInUser");
+  const deviceId = sessionStorage.getItem("deviceId");
+  const user = validUsers.find(u => u.username === loggedInUser);
+
+  if (user) {
+    user.activeSessions = user.activeSessions.filter(s => s.deviceId !== deviceId);
+    if (user.activeSessions.length === 0) {
+      user.sessionActive = false;
+      user.lastLogin = null;
+    }
+  }
+
+  sessionStorage.removeItem("loggedInUser");
+  sessionStorage.removeItem("deviceId");
+  // Create a floating logout success message
+  const logoutMessage = document.createElement("div");
+  logoutMessage.textContent = "Logged out successfully!";
+  logoutMessage.style.position = "fixed";
+  logoutMessage.style.top = "10px";
+  logoutMessage.style.left = "50%";
+  logoutMessage.style.transform = "translateX(-50%)";
+  logoutMessage.style.padding = "10px 20px";
+  logoutMessage.style.backgroundColor = "#ff3b3b";
+  logoutMessage.style.color = "white";
+  logoutMessage.style.borderRadius = "5px";
+  logoutMessage.style.zIndex = "1000";
+  document.body.appendChild(logoutMessage);
+
+  // Remove the message after 3 seconds
+  setTimeout(() => {
+    logoutMessage.remove();
+    window.location.reload(); // Reload the page after logout
+  }, 2000);
+
+  document.querySelector(".player-container").style.display = "none";
+  document.querySelector(".login-container").style.display = "block";
+}
+
+// Generate Unique Device ID
+function generateDeviceId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }
 
 // WebViewString Communication with MIT App Inventor
 function updateAppInventorState(state) {
-  if (window.AppInventor) window.AppInventor.setWebViewString(state);
+  if (window.AppInventor) {
+    window.AppInventor.setWebViewString(state);
+  }
 }
 
-// Update MIT App Inventor with Media Session Status
+// Function to send a message to MIT App Inventor about Media Session status
 function updateAppInventorWithMediaSessionStatus(status) {
-  if (window.AppInventor) window.AppInventor.setWebViewString("MediaSessionStatus: " + status);
+  if (window.AppInventor) {
+    window.AppInventor.setWebViewString("MediaSessionStatus: " + status);
+  }
 }
 
 // Media Session API Integration
 function setupMediaSession() {
-  if ("mediaSession" in navigator) {
+  if ('mediaSession' in navigator) {
     navigator.mediaSession.setActionHandler("play", playSong);
     navigator.mediaSession.setActionHandler("pause", pauseSong);
     navigator.mediaSession.setActionHandler("nexttrack", playNextSong);
     navigator.mediaSession.setActionHandler("previoustrack", playPrevSong);
 
+    // Inform App Inventor that the Media Session is enabled
     updateAppInventorWithMediaSessionStatus("Media Session Enabled");
   } else {
+    // Inform App Inventor that the Media Session is not supported
     updateAppInventorWithMediaSessionStatus("Media Session Not Supported");
   }
 }
-
 
 // Existing code remains the same
 const SONGS = [
@@ -205,12 +267,6 @@ const SONGS = [
     title: "adada-Mazhaida",
     artist: "yuvan",
     url: "Adada-Mazhaida.mp3",
-    coverUrl: "https://example.com/cover2.jpg",
-  },
-    {
-    title: "Yendi Unna Naan",
-    artist: "Nishan",
-    url: "Yendi Unna Naan (Azhage Azhage En Azhage).mp3",
     coverUrl: "https://example.com/cover2.jpg",
   },
   {
@@ -1645,6 +1701,7 @@ let isPlaying = false;
 const audio = new Audio();
 const trackList = document.getElementById('trackList');
 const searchInput = document.getElementById('search');
+
 const title = document.getElementById('title');
 const artist = document.getElementById('artist');
 const cover = document.getElementById('cover');
@@ -1781,6 +1838,8 @@ const renderSongList = (songs) => {
     trackList.appendChild(li);
   });
 };
+
+
 // Function to update media session metadata and send status to App Inventor
 const updateMediaSession = (song) => {
   if ('mediaSession' in navigator) {
